@@ -1,0 +1,432 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* 날짜 선택 박스 크기 */
+        .select-dropdown {
+          height: 2.5rem; /* Height for single selection */
+        }
+
+        /* 날짜 선택시 뜨틑 팝업창 */
+        .select-dropdown:focus {
+          height: 2rem; /* Adjust the height to fit 10 items approximately */
+          overflow-y: auto; /* Allows scrolling */
+        }
+
+        /* 투명도 조절 slider 설정 */
+        .range { -webkit-appearance: none; width: 100%; margin: 5.5px 0; }
+        .range:focus { outline: none; }
+            /* cursor 설정 */
+        .range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 50px; height: 50px; border-radius: 50%; background: #332a29; cursor: pointer; position: relative; top: 50%; transform: translateY(-50%);}
+            /* slider 설정 */
+        .range::-webkit-slider-runnable-track { width: 100%; height: 25px; cursor: pointer; border-radius: 25px; border: 2px solid #9ca3af; background: linear-gradient(135deg, #ffffff 0%, #F8400B 100%);   }
+
+        /* (투명도 조절을 위한) 이미지 오버레이 설정 */
+        .image-pair {
+            position: relative;
+            display: inline-block;
+        }
+        .overlay-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure the images cover the area without stretching */
+        }
+        .base-image {
+            display: block;
+            width: 100%; /* This will control the size of the images */
+            height: auto;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="app" class="min-h-screen bg-white p-8">
+    <!-- header 부분 -->
+    <header class="border-b-4 border-[#4766B0] items-center w-full mb-8 body-font">
+        <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+            <nav class="flex lg:w-2/5 flex-wrap items-center text-base md:ml-auto">
+            </nav>
+            <div class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
+                <img class="inline" src="{% static 'css/src/source/logo.png' %}">
+                <a class="text-[#4766B0] text-4xl font-medium ml-2 text-right">MEMORIA</a>
+            </div>
+            <div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0">
+            </div>
+        </div>
+    </header>
+    <!-- 환자 기본 정보 -->
+    <div class="flex justify-center mx-10 ...">
+        <div class="outline outline-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 mb-4 w-full">
+            <div class="flex justify-center items-center ">
+                <!--ID-->
+                <div class="flex justify-center items-center mx-6">
+                    <div class="flex justify-end">
+                        <label class="block text-xl font-bold text-gray-700">ID</label>
+                    </div>
+                    <div class="flex justify-start mx-5">
+                        <a class="mt-1 block wl-3 w-full px-7 py-2 bg-white border border-gray-300 rounded-xl text-2xl shadow-sm">{{ context.patient.id }}</a>
+                    </div>
+                </div>
+                <!--NAME-->
+                <div class="flex justify-center items-center mx-6">
+                    <div class="flex justify-end">
+                        <label class="block text-xl font-bold text-gray-700">Name</label>
+                    </div>
+                    <div class="flex justify-start mx-5">
+                        <a class="mt-1 block wl-3 w-full px-7 py-2 bg-white border border-gray-300 rounded-xl text-2xl shadow-sm">{{ contextpatient.name }}</a>
+                    </div>
+                </div>
+                <!--BIRTH-->
+                <div class="flex justify-center items-center mx-6">
+                    <div class="flex justify-end">
+                        <label class="block text-2xl font-bold text-gray-700">Birth</label>
+                    </div>
+                    <div class="flex justify-start mx-5">
+                        <a class="mt-1 block wl-3 w-full px-7 py-2 bg-white border border-gray-300 rounded-xl text-2xl shadow-sm">{{ context.patient.birth }}</a>
+                    </div>
+                </div>
+                <!--Gender-->
+                <div class="flex justify-center items-center mx-6">
+                    <div class="flex justify-end">
+                        <label class="block text-2xl font-bold text-gray-700">Gender</label>
+                    </div>
+                    <div class="flex justify-start mx-5">
+                        <a class="mt-1 block wl-3 w-full px-7 py-2 bg-white border border-gray-300 rounded-xl text-2xl shadow-sm">{{ context.diagnosis.date }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 진단 정보 / 날짜선택 / 환자 특이사항 -->
+    <div class="flex justify-around mx-10 my-5 ...">
+        <!-- 상단 첫번째 container -->
+        <div class="outline outline-[#4766B0] items-center bg-white shadow rounded-lg p-6 mb-4 w-2/5">
+            <div class="flex justify-center items-center mx-6 my-3">
+                <button id="button_MMSE" onclick="toggleButton(1)" class="bg-black text-xl text-white px-8 py-2 w-58 rounded-full mx-3">
+                    인지점수(MMSE)
+                </button>
+                <button id="button_hippo" onclick="toggleButton(2)" class="bg-gray-400 text-xl text-white px-8 w-68 ml-2 py-2 rounded-full">
+                    해마 양쪽볼륨(hippocampus)
+                </button>
+            </div>
+            <canvas id="myChart"></canvas>
+        </div>
+        <!-- 상단 두번째 container -->
+        <div class="outline outline-[#4766B0] items-center bg-white shadow rounded-lg p-6 ml-6 mb-4 w-1/5">
+            <div class="bg-white rounded-lg p-4">
+
+                    <!-- 날짜 선택 -->
+                    <div class="flex justify-center items-center mb-8 rounded-lg px-1 py-1 outline outline-[#4766B0]">
+                        <!-- 시작 년도 드롭다운 -->
+                        <div class="relative mr-4">
+                            <button id="startYearDropdownButton" class="text-black bg-[#EFF4FF] px-4 py-1 my-1 rounded inline-flex items-center min-w-[100px]">
+                                From
+                                <svg class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div id="startYearDropdown" class="absolute hidden bg-white border rounded mt-1 z-10 w-56 max-h-60 overflow-auto"> <!--드롭다운 너비 여기서 설정--></div>
+                        </div>
+                        <!-- 연결바 -->
+                        <div>
+                            ㅡ
+                        </div>
+                        <!-- 종료 연도 드롭다운 -->
+                        <div class="relative ml-4">
+                            <button id="endYearDropdownButton" class="text-black bg-[#EFF4FF] px-4 py-1 rounded inline-flex items-center min-w-[100px]">
+                                To
+                                <svg class="fill-current ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div id="endYearDropdown" class="absolute hidden bg-white border rounded mt-1 z-10 w-56 max-h-60 overflow-auto"> <!--드롭다운 너비 여기서 설정--></div>
+                        </div>
+
+                    </div>
+
+                    <!-- 날짜 List -->
+                    <div id="dateList" class="h-48 overflow-auto mb-8">
+                        <!-- Date items will be dynamically added here -->
+                    </div>
+
+                    <!-- 선택 버튼 -->
+                    <div class="flex justify-end">
+                        <button class="bg-[#4766B0] text-white px-4 py-1 rounded">선택</button>
+                    </div>
+            </div>
+        </div>
+        <!-- 상단 세번째 container -->
+        <div class="outline outline-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 ml-6 mb-4 w-2/5">
+            <div >
+                <div class="my-3 font-bold text-2xl">
+                    환자 특이사항
+                </div>
+            </div>
+            <div class="my-5 flex items-center justify-between text-white">
+                <div class="flex items-stretch space-x-4">
+                    <button class="bg-black px-4 w-25 py-1 rounded-xl">흡연</button>
+                    <button class="bg-gray-300 px-4 w-25 h-10 py-1 rounded-xl">음주</button>
+                    <button class="bg-gray-300 px-4 w-25 h-10 py-1 rounded-xl">우울증 병력</button>
+                </div>
+
+            </div>
+            <div class="overflow-y-auto outline outline-[#4766B0] bg-white mt-10 h-1/2 rounded-xl text-xl">
+                <div class="mx-5 my-5 text-black">
+                    <a>
+                        (20.05.19)
+                    </a>
+                    <a>
+                        항생제 알러지 반응
+                    </a>
+
+                </div>
+                <div class="mx-5 my-5 text-black">
+                    <a>
+                        (20.12.04)
+                    </a>
+                    <a>
+                        추가 약 처방
+                    </a>
+                </div>
+                <div class="mx-5 my-5 text-black">
+                    <a>
+                        (21.04.30)
+                    </a>
+                    <a>
+                        추가 약 처방
+                    </a>
+                </div>
+                <div class="mx-5 my-5 text-black">
+                    <a>
+                        (21.11.27)
+                    </a>
+                    <a>
+                        추가 약 처방
+                    </a>
+                </div>
+                <div class="mx-5 my-5 text-black">
+                    <a>
+                        (22.02.14)
+                    </a>
+                    <a>
+                        추가 약 처방
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- MRI image 및 예측 정확도 -->
+    <div class="flex justify-center mx-10 my-5 ...">
+       <div class="outline outline-[#4766B0] bg-white shadow rounded-lg p-6 mb-4 w-full">
+           <!-- 진료 날짜 -->
+            <div class="flex justify-center items-center mx-6 my-3">
+                <a class="text-center mt-1 block w-60 px-3 py-2 bg-white rounded-full border-2 border-[#4766B0] text-2xl shadow-sm">22.02.14</a>
+            </div>
+           <!-- 1. 진료 MRI 이미지 & 2. gradcam & 3. 투명도 조절/양성 판정 -->
+            <div class="flex justify-center items-stretch mx-6 my-6">
+                <!-- 1. -->
+                <img class="inline rounded-2xl mx-4 my-4 w-1/5 " src="{% static 'css/src/patient/002_S_5018/plane15.png' %}">
+
+                <!-- 2. -->
+                <div class="flex items-center w-3/5 mx-4 my-4 rounded-2xl border-2 border-[#4766B0] bg-[#EFF4FF]">
+                    <!-- First pair of images -->
+                    <div class="inline w-1/3 mx-4 my-4 image-pair">
+                        <img class="base-image" src="{% static 'css/src/patient/002_S_5018/plane15.png' %}" alt="Base Image 1" >
+                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/gradcam.png' %}" alt="Overlay Image 1" id="overlay1">
+                    </div>
+                    <!-- Second pair of images -->
+                    <div class="inline w-1/3  mx-4 my-4 image-pair">
+                        <img class="base-image" src="{% static 'css/src/patient/002_S_5018/plane15.png' %}" alt="Base Image 2" >
+                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/gradcam1.png' %}" alt="Overlay Image 2" id="overlay2">
+                    </div>
+                    <!-- Third pair of images -->
+                    <div class="inline w-1/3 mx-4 my-4 image-pair">
+                        <img class="base-image" src="{% static 'css/src/patient/002_S_5018/plane15.png' %}" alt="Base Image 3">
+                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/gradcam1.png' %}" alt="Overlay Image 3" id="overlay3">
+                    </div>
+                </div>
+                <!-- 3. -->
+                <div class="grid grid-rows-3 flex justify-center items-center w-1/5 mx-2 my-3">
+                    <!-- 투명도 조절 slidebar -->
+                    <div>
+                        <input type="range" min="0" max="100" value="100" class="range my-3" id="opacityControl">
+                    </div>
+                    <!-- 음성/양성 확률 -->
+                    <div class="justify-center text-center my-2 mx-6 block w-60 px-2 py-4 bg-[#FDF0F0] rounded-xl border-4 border-[#F8400B] shadow-sm">
+                        <a class="my-2 text-4xl text-[#F8400B]">양성</a>
+                        <a class="my-2 text-xl text-[#F8400B]">positive</a>
+                    </div>
+                    <div class="justify-center text-center my-2 mx-6 block w-60 px-2 py-4 bg-[#EFF4FF] rounded-xl border-4 border-[#4766B0] shadow-sm">
+                        <a class="my-2 text-4xl text-[#4766B0]">Acc</a>
+                        <a class="my-2 text-4xl text-[#4766B0]">82%</a>
+                    </div>
+                </div>
+            </div>
+       </div>
+    </div>
+    <!-- 진단기록 -->
+    <div class="flex justify-center mx-10 my-5 ...">
+        <div class="outline outline-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 mb-4 w-full">
+        </div>
+    </div>
+</div>
+
+<script>
+    // 이미지 투명도 조절 스크립트 추가
+    const opacityControl = document.getElementById('opacityControl');
+    const overlayImages = document.querySelectorAll('.overlay-image');
+
+    opacityControl.addEventListener('input', function() {
+        overlayImages.forEach(image => {
+            image.style.opacity = this.value / 100;
+        });
+    });
+    // 날짜선택 드롭 다운
+    document.addEventListener('DOMContentLoaded', () => {
+        let selectedStartYear = null;
+        let selectedEndYear = null;
+
+        const startYearDropdown = document.getElementById('startYearDropdown');
+        const endYearDropdown = document.getElementById('endYearDropdown');
+        const startYearDropdownButton = document.getElementById('startYearDropdownButton');
+        const endYearDropdownButton = document.getElementById('endYearDropdownButton');
+
+        startYearDropdownButton.addEventListener('click', function() {
+            startYearDropdown.classList.toggle('hidden');
+        });
+
+        endYearDropdownButton.addEventListener('click', function() {
+            endYearDropdown.classList.toggle('hidden');
+        });
+
+        function updateDateList() {
+            const listContainer = document.getElementById('dateList');
+            listContainer.innerHTML = ''; // 리스트 초기화
+
+            // 예시 날짜 데이터
+            const exampleDates = ['2024. 02. 14.', '2023. 10. 14.', '2022. 08. 14.', '2021. 02. 20.', '2020. 05. 15.', '2019. 07. 23.', '2018. 09. 30.', '2017. 12. 12.'];
+
+            // 선택된 시작 연도와 종료 연도에 따라 날짜 필터링
+            const filteredDates = exampleDates.filter(date => {
+                const year = parseInt(date.split('.')[0]);
+                return (!selectedStartYear || year >= selectedStartYear) &&
+                       (!selectedEndYear || year <= selectedEndYear);
+            });
+
+            // 필터링된 날짜를 리스트에 추가
+            filteredDates.forEach(date => {
+                const dateItem = document.createElement('div');
+                dateItem.className = 'flex items-center justify-between px-3 py-2 mb-2 bg-[#EFF4FF] rounded';
+                dateItem.innerHTML = `<span class="text-black">${date}</span>`;
+                listContainer.appendChild(dateItem);
+            });
+        }
+
+        function populateDropdown(dropdown, button, isStartYear) {
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= currentYear - 50; year--) {
+                let option = document.createElement('a');
+                option.href = "#";
+                option.classList = 'block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white';
+                option.textContent = year;
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    button.textContent = year; // 버튼 텍스트 업데이트
+                    if (isStartYear) {
+                        selectedStartYear = year;
+                    } else {
+                        selectedEndYear = year;
+                    }
+                    updateDateList(); // 날짜 리스트 업데이트
+                    button.innerHTML = `${year} <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>`;
+                    dropdown.classList.add('hidden'); // 드롭다운 숨기기
+                });
+                dropdown.appendChild(option);
+            }
+        }
+
+        populateDropdown(startYearDropdown, startYearDropdownButton, true);
+        populateDropdown(endYearDropdown, endYearDropdownButton, false);
+        updateDateList(); // 초기 날짜 리스트 표시
+    });
+    // 진단 정보 차트
+    function toggleButton(buttonId) {
+        // Get both buttons
+        const button1 = document.getElementById('button_MMSE');
+        const button2 = document.getElementById('button_hippo');
+
+        // Determine which button was clicked and update styles accordingly
+        if(buttonId === 1) {
+            button1.classList.replace('bg-gray-400', 'bg-black');
+            button2.classList.replace('bg-black', 'bg-gray-400');
+        } else {
+            button2.classList.replace('bg-gray-400', 'bg-black');
+            button1.classList.replace('bg-black', 'bg-gray-400');
+        }
+    }
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'line', // Changed to 'line' for a line chart
+        data: {
+            labels: [], // Date labels will be added here
+            datasets: [{
+                label: '- color',
+                data: [], // Data points for the dates
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                fill: false, // Set to false for a line chart without a filled area
+                tension: 0.1 // Smooths the line
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    document.getElementById('button_MMSE').addEventListener('click', function() {
+        // Example data for 6 dates
+        const newLabels = ['15.02.14', '16.01.17', '16.12.08', '18.01.20', '19.05.11', '20.10.30'];
+        const newData = [31, 28, 22, 20, 18, 13];
+
+        myChart.data.labels = newLabels;
+        myChart.data.datasets.forEach((dataset) => {
+            dataset.data = newData;
+        });
+        myChart.update();
+    });
+    document.getElementById('button_hippo').addEventListener('click', function() {
+        // Example data for 6 dates
+        const newLabels = ['15.02.14', '16.01.17', '16.12.08', '18.01.20', '19.05.11', '20.10.30'];
+        const newData = [5, 7, 10, 11, 12, 16];
+
+        myChart.data.labels = newLabels;
+        myChart.data.datasets.forEach((dataset) => {
+            dataset.data = newData;
+        });
+        myChart.update();
+    });
+
+
+
+
+</script>
+
+</body>
+</html>

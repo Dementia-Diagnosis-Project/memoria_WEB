@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Style to apply when the select is opened */
+        .select-dropdown {
+          height: 2.5rem; /* Height for single selection */
+        }
+
+        /* Style to apply when the select is focused to show dropdown */
+        .select-dropdown:focus {
+          height: 10rem; /* Adjust the height to fit 10 items approximately */
+          overflow-y: auto; /* Allows scrolling */
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        select:-webkit-autofill,
+        select:-webkit-autofill:hover,
+        select:-webkit-autofill:focus{
+            border: 1px solid cornflowerblue;
+            box-shadow: 0 0 0px 1000px white inset;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div id="app" class="min-h-screen bg-white p-8">
+        <!-- header 부분 -->
+        <header class="border-b-4 border-[#4766B0] items-center w-full mb-8 body-font">
+            <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+                <nav class="flex lg:w-2/5 flex-wrap items-center text-base md:ml-auto">
+                </nav>
+                <div class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
+                    <img class="inline" src="{% static 'css/src/source/logo.png' %}">
+                    <a class="text-[#4766B0] text-4xl font-medium ml-2 text-right">MEMORIA</a>
+                </div>
+                <div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0">
+                </div>
+            </div>
+        </header>
+        <!-- 환자 기본 정보 -->
+        <div class="flex justify-center mx-10 ...">
+            <div class="outline outline-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 mb-4 w-full">
+                <div class="flex justify-center items-center ">
+                    <!--ID-->
+                    <div class="flex justify-center items-center mx-6">
+                        <div class="flex justify-end">
+                            <label for="id" class="block text-xl font-bold text-gray-700">ID</label>
+                        </div>
+                        <div class="flex justify-start mx-5">
+                            <input type="text" id="id" name="id" class="hover:bg-white appearance-none mt-1 block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl text-xl shadow-sm placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="000_S_0000">
+                        </div>
+                    </div>
+                    <!--NAME-->
+                    <div class="flex justify-center items-center mx-6">
+                        <div class="flex justify-end">
+                            <label for="name" class="block text-xl font-bold text-gray-700">Name</label>
+                        </div>
+                        <div class="flex justify-start mx-5">
+                            <input type="text" id="name" name="name" class="appearance-none mt-1 block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl text-xl shadow-sm placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="홍길동">
+                        </div>
+                    </div>
+                    <!--BIRTH-->
+                    <div class="flex justify-center items-center mx-6">
+                        <div class="flex justify-end">
+                            <label for="birth" class="block text-xl font-bold text-gray-700">Birth</label>
+                        </div>
+                        <div class="flex justify-start mx-5">
+                            <input type="text" id="birth" name="birth" class="appearance-none mt-1 block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl text-xl shadow-sm placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="1900.01.01">
+                        </div>
+                    </div>
+                    <!--GENDER-->
+                    <div class="flex justify-center items-center mx-6">
+                        <div class="flex justify-end">
+                            <label for="gender" class="block text-xl font-bold text-gray-700">Gender</label>
+                        </div>
+                        <div class="flex justify-start mx-5">
+                            <select id="gender" name="gender" class="mt-1 block w-30 px-3 py-2 border text-gray-700 bg-white border-gray-300 rounded-xl shadow-sm text-xl placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="-">
+                                <option class="text-gray-400" value="" disabled selected>-</option>
+                                <option>남</option>
+                                <option>여</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 데이터 입력받는 부분 -->
+        <div class="flex justify-around mx-10 my-5 items-stretch ...">
+            <!-- 첫번째 container -->
+            <div class="outline outline-[#4766B0] items-center bg-white shadow rounded-lg mr-8 w-1/3">
+                <!-- 상단 구분바 -->
+                <div class="mb-4 text-center">
+                    <h2 class="text-xl font-bold py-3 bg-[#4766B0] text-white">환자 특이사항</h2>
+                </div>
+                <!-- 클릭 가능한 버튼들 -->
+                <div class="flex space-x-4 my-5 mx-5">
+                  <button id="smoking" class="bg-gray-300 text-black px-4 py-2 rounded" onclick="toggleButton(this)">흡연</button>
+                  <button id="drinking" class="bg-gray-300 text-black px-4 py-2 rounded" onclick="toggleButton(this)">음주</button>
+                  <button id="depression" class="bg-gray-300 text-black px-4 py-2 rounded" onclick="toggleButton(this)">우울증 병력</button>
+                </div>
+
+                <!-- 기록된 내용을 표시할 공간 -->
+                <div id="recordList" class="space-y-2 h-64 my-5 mx-5">
+                  <!-- 여기에 기록된 내용이 추가됩니다 -->
+                </div>
+
+                <!-- 입력 필드 및 버튼 -->
+                <div class="flex items-center my-5 mx-5">
+                  <input id="inputField" type="text" class="shadow appearance-none border rounded w-full py-3 px-3 text-lg text-gray-700" placeholder="추가할 내용을 입력하세요.">
+                  <button class="bg-[#4766B0] text-white px-5 py-3 rounded ml-2" onclick="addRecord()">+</button>
+                </div>
+            </div>
+            <!-- 두번째 container -->
+            <div class="outline outline-[#4766B0] items-center bg-white shadow rounded-lg mr-8 w-1/3">
+                <!-- 상단 구분바 -->
+                <div class="mb-4 text-center">
+                    <h2 class="text-xl font-bold py-3 bg-[#4766B0] text-white">진단정보 입력란</h2>
+                </div>
+                <!-- 진단 정보 입력란 -->
+                <div class="grid grid-rows-2 grid-cols-2 my-4 mx-4 flex items-center">
+                    <div class="mx-8">
+                        <label for="mmseScore" class="block text-2xl font-bold text-gray-700 mr-4">인지점수(MMSE):</label>
+                    </div>
+                    <div class="my-8">
+                        <input type="text" id="mmseScore" class="outline outline-gray-300  shadow-lg focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-300 block w-full px-3 py-4 sm:text-xl rounded-lg" placeholder="점수를 입력하세요">
+                    </div>
+                    <div class="mx-8">
+                        <label for="hippocampusVolume" class="block text-2xl font-bold text-gray-700 mr-4">해마 양쪽볼륨:</label>
+                    </div>
+                    <div class="my-8">
+                        <input type="text" id="hippocampusVolume" class="outline outline-gray-300 shadow-lg focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-300 block w-full px-3 py-4 sm:text-xl border-gray-700 rounded-lg" placeholder="볼륨을 입력하세요">
+                    </div>
+                </div>
+            </div>
+            <!-- 세번째 container -->
+            <div class="container border-4 border-dashed border-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 w-1/3">
+              <div id="upload-area" class="flex justify-center items-center w-full h-full">
+                <div id="drop-area" class=" rounded-lg w-full h-full p-12 flex flex-col justify-center items-center">
+                  <img id="upload-icon" src="{% static 'css/src/source/add_photo.png' %}" alt="Upload Icon" class="mb-3">
+                  <p id="upload-text" class="mb-2 text-[#4766B0]">DICOM 파일 업로드</p>
+                  <input type="file" id="fileElem" class="hidden" accept=".zip">
+                  <label for="fileElem" id="file-label" class="cursor-pointer bg-[#4766B0] text-white px-4 py-2 rounded transition duration-300 hover:bg-blue-700">
+                    파일 선택
+                  </label>
+                  <!-- 로딩 중 상태 표시 (초기 상태에서는 숨겨져 있음) -->
+                  <div id="loading" class="hidden">
+                    <p class="text-green-700 text-2xl">로딩 중...</p>
+                  </div>
+                  <!-- 업로드 완료 상태 표시 (초기 상태에서는 숨겨져 있음) -->
+                  <div id="upload-complete" class="hidden">
+                    <p class="text-blue-700 text-2xl">업로드 완료!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <!-- 데이터 전송 -->
+        <div class="flex justify-end mx-10 my-5 text-center ...">
+            <button class="bg-[#4766B0] text-white text-3xl font-bold shadow rounded-2xl py-3 mb-4 w-52" onclick="saveData()">
+                확인 >>
+            </button>
+
+        </div>
+    </div>
+</form>
+
+    <script>
+      // 데이터 저장을 위한 객체
+      let patient_data = {
+          smoking: false,
+          drinking: false,
+          depression: false,
+
+          mmseScore: '',
+          hippocampusVolume: '',
+      };
+
+      // 버튼 클릭 상태 토글 함수
+      function toggleButton(element) {
+        element.classList.toggle('bg-gray-300', !patient_data[id]);
+        element.classList.toggle('bg-[#4766B0]', patient_data[id]);
+      }
+
+      // 기록 추가 함수
+      function addRecord() {
+        const input = document.getElementById('inputField');
+        const recordList = document.getElementById('recordList');
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        const dateString = now.toLocaleDateString();
+        const text = input.value.trim();
+
+        if (text) {
+          const recordItem = document.createElement('div');
+          recordItem.className = 'bg-white shadow p-4 rounded';
+          recordItem.textContent = `${dateString} ${timeString}: ${text}`;
+          recordList.appendChild(recordItem);
+
+          input.value = ''; // 입력 필드 초기화
+        }
+      }
+
+      // input 페이지 전체 데이터 저장 함수
+      function saveData() {
+        // 입력 필드에서 데이터 수집
+        const id = document.getElementById('id').value;
+        const name = document.getElementById('name').value;
+        const birth = document.getElementById('birth').value;
+        const gender = document.getElementById('gender').value;
+        const smoking = document.getElementById('smoking').classList.contains('bg-[#4766B0]') ? 'Yes' : 'No';
+        const drinking = document.getElementById('drinking').classList.contains('bg-[#4766B0]') ? 'Yes' : 'No';
+        const depression = document.getElementById('depression').classList.contains('bg-[#4766B0]') ? 'Yes' : 'No';
+        const mmseScore = document.getElementById('mmseScore').value;
+        const hippocampusVolume = document.getElementById('hippocampusVolume').value;
+
+        // CSV 형식의 문자열로 변환
+        const csvContent = `ID,Name,Birth,Gender,Smoking,Drinking,Depression,MMSE Score,Hippocampus Volume\n${id},${name},${birth},${gender},${smoking},${drinking},${depression},${mmseScore},${hippocampusVolume}`;
+
+        // Blob 객체로 변환하여 다운로드 링크 생성
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'patient_data.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      // 드롭 영역 요소
+  const dropArea = document.getElementById('drop-area');
+
+  // 파일 드래그 시 기본 동작 방지 및 드래그 앤 드롭 이벤트 핸들링
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // 드래그하고 있는 파일이 드롭 영역에 들어오고 나갈 때의 스타일 변경
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight(e) {
+    dropArea.classList.add('bg-gray-200');
+  }
+
+  function unhighlight(e) {
+    dropArea.classList.remove('bg-gray-200');
+  }
+
+  // 파일 드롭 시 파일들 처리
+  dropArea.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    let dt = e.dataTransfer;
+    let files = dt.files;
+
+    handleFiles(files);
+  }
+
+  // 파일 선택 시 파일들 처리
+  document.getElementById('fileElem').addEventListener('change', (e) => {
+    handleFiles(e.target.files);
+  }, false);
+
+  function handleFiles(files) {
+    // 파일 선택 UI 숨기기
+    document.getElementById('upload-icon').style.display = 'none';
+    document.getElementById('upload-text').style.display = 'none';
+    document.getElementById('file-label').style.display = 'none';
+
+    // 로딩 UI 표시
+    document.getElementById('loading').style.display = 'block';
+
+    // 파일 처리 함수 (예제로 setTimeout 사용)
+    setTimeout(() => {
+      process(files[0]); // process 함수는 파일을 처리하는 로직을 구현해야 함
+    }, 3000); // 가정: 파일 처리에 1초 걸림
+  }
+
+  function process(file) {
+    console.log('Processing', file.name);
+    // 파일 처리 로직 구현
+    // ...
+
+    // 로딩 UI 숨기기
+    document.getElementById('loading').style.display = 'none';
+
+    // 업로드 완료 UI 표시
+    document.getElementById('upload-complete').style.display = 'block';
+  }
+    </script>
+
+</body>
+</html>

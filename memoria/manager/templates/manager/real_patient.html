@@ -113,10 +113,10 @@
         <!-- 상단 첫번째 container -->
         <div class="outline outline-[#4766B0] items-center bg-white shadow rounded-lg p-6 mb-4 w-2/5">
             <div class="flex justify-center items-center mx-6 my-3">
-                <button id="button_MMSE" onclick="toggleButton(1)" class="bg-black text-xl text-white px-8 py-2 rounded-full mx-3">
+                <button id="button_MMSE" onclick="toggleButton(1)" class="bg-black text-lg text-white px-8 py-2 rounded-full w-24 mx-3">
                     인지점수(MMSE)
                 </button>
-                <button id="button_hippo" onclick="toggleButton(2)" class="bg-gray-400 text-xl text-white px-8 ml-2 py-2 rounded-full">
+                <button id="button_hippo" onclick="toggleButton(2)" class="bg-gray-400 text-lg text-white px-8 ml-2 py-2 w-24 rounded-full">
                     해마 양쪽볼륨(hippocampus)
                 </button>
             </div>
@@ -244,12 +244,12 @@
                     <!-- First pair of images -->
                     <div class="inline w-1/3 mx-4 my-4 image-pair">
                         <img class="base-image" src="{% static 'css/src/patient/002_S_5018/plane15.png' %}" alt="Base Image 1" >
-                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/gradcam1.png' %}" alt="Overlay Image 1" id="overlay1">
+                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/gradcam.png' %}" alt="Overlay Image 1" id="overlay1">
                     </div>
                     <!-- Second pair of images -->
                     <div class="inline w-1/3  mx-4 my-4 image-pair">
                         <img class="base-image" src="{% static 'css/src/patient/002_S_5018/plane15.png' %}" alt="Base Image 2" >
-                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/gradcam1.png' %}" alt="Overlay Image 2" id="overlay2">
+                        <img class="overlay-image" src="{% static 'css/src/patient/002_S_5018/annomalymap.png' %}" alt="Overlay Image 2" id="overlay2">
                     </div>
                     <!-- Third pair of images -->
                     <div class="inline w-1/3 mx-4 my-4 image-pair">

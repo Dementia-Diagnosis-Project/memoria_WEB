@@ -104,9 +104,9 @@
                 </div>
                 <!-- 클릭 가능한 버튼들 -->
                 <div class="flex space-x-4 my-5 mx-5">
-                  <button id="smoking" class="bg-gray-300 text-black px-4 py-2 rounded" onclick="toggleButton(this)">흡연</button>
-                  <button id="drinking" class="bg-gray-300 text-black px-4 py-2 rounded" onclick="toggleButton(this)">음주</button>
-                  <button id="depression" class="bg-gray-300 text-black px-4 py-2 rounded" onclick="toggleButton(this)">우울증 병력</button>
+                  <button id="smoking" class="bg-gray-300 text-black px-4 py-2 rounded-lg" onclick="toggleButton(this)">흡연</button>
+                  <button id="drinking" class="bg-gray-300 text-black px-4 py-2 rounded-lg" onclick="toggleButton(this)">음주</button>
+                  <button id="depression" class="bg-gray-300 text-black px-4 py-2 rounded-lg" onclick="toggleButton(this)">우울증 병력</button>
                 </div>
 
                 <!-- 기록된 내용을 표시할 공간 -->
@@ -129,13 +129,13 @@
                 <!-- 진단 정보 입력란 -->
                 <div class="grid grid-rows-2 grid-cols-2 my-4 mx-4 flex items-center">
                     <div class="mx-8">
-                        <label for="mmseScore" class="block text-xl font-bold text-gray-700 mr-4">인지점수(MMSE):</label>
+                        <label for="mmseScore" class="block text-lg font-bold text-gray-700 mr-4">인지점수(MMSE):</label>
                     </div>
                     <div class="my-8">
                         <input type="text" id="mmseScore" class="outline outline-gray-300  shadow-lg focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-300 block w-full px-3 py-4 sm:text-xl rounded-lg" placeholder="점수를 입력하세요">
                     </div>
                     <div class="mx-8">
-                        <label for="hippocampusVolume" class="block text-xl font-bold text-gray-700 mr-4">해마 양쪽볼륨:</label>
+                        <label for="hippocampusVolume" class="block text-lg font-bold text-gray-700 mr-4">해마 양쪽볼륨:</label>
                     </div>
                     <div class="my-8">
                         <input type="text" id="hippocampusVolume" class="outline outline-gray-300 shadow-lg focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-300 block w-full px-3 py-4 sm:text-xl border-gray-700 rounded-lg" placeholder="볼륨을 입력하세요">
@@ -166,7 +166,7 @@
         </div>
         <!-- 데이터 전송 -->
         <div class="flex justify-end mx-10 my-5 text-center ...">
-            <a href="/manager/output/" class="link-button bg-[#4766B0] text-white text-3xl font-bold shadow rounded-2xl py-3 mb-4 w-52">확인 >></a>
+            <a href="http://52.79.204.12:8000/manager/output/" class="link-button bg-[#4766B0] text-white text-3xl font-bold shadow rounded-2xl py-3 mb-4 w-52">확인 >></a>
 
         </div>
     </div>

@@ -57,7 +57,7 @@
                             <label for="id" class="block text-xl font-bold text-gray-700">ID</label>
                         </div>
                         <div class="flex justify-start mx-5">
-                            <input type="text" id="id" name="id" class="hover:bg-white appearance-none mt-1 block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl text-xl shadow-sm placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="000_S_0000">
+                            <input type="text" id="id" name="id" class="hover:bg-white appearance-none mt-1 block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl text-xl shadow-sm placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="000_S_0000_000000">
                         </div>
                     </div>
                     <!--NAME-->
@@ -78,13 +78,13 @@
                             <input type="text" id="birth" name="birth" class="appearance-none mt-1 block w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl text-xl shadow-sm placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="1900.01.01">
                         </div>
                     </div>
-                    <!--GENDER-->
+                    <!--SEX-->
                     <div class="flex justify-center items-center mx-6">
                         <div class="flex justify-end">
-                            <label for="gender" class="block text-xl font-bold text-gray-700">Gender</label>
+                            <label for="sex" class="block text-xl font-bold text-gray-700">Sex</label>
                         </div>
                         <div class="flex justify-start mx-5">
-                            <select id="gender" name="gender" class="mt-1 block w-30 px-3 py-2 border text-gray-700 bg-white border-gray-300 rounded-xl shadow-sm text-xl placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="-">
+                            <select id="sex" name="sex" class="mt-1 block w-30 px-3 py-2 border text-gray-700 bg-white border-gray-300 rounded-xl shadow-sm text-xl placeholder-gray-300 focus:bg-white focus:outline-none focus:border-blue-500" placeholder="-">
                                 <option class="text-gray-400" value="" disabled selected>-</option>
                                 <option>남</option>
                                 <option>여</option>
@@ -94,7 +94,6 @@
                 </div>
             </div>
         </div>
-
         <!-- 데이터 입력받는 부분 -->
         <div class="flex justify-around mx-10 my-5 items-stretch ...">
             <!-- 첫번째 container -->
@@ -125,7 +124,7 @@
             <div class="outline outline-[#4766B0] items-center bg-white shadow rounded-lg mr-8 w-1/3">
                 <!-- 상단 구분바 -->
                 <div class="mb-4 text-center">
-                    <h2 class="text-xl font-bold py-3 bg-[#4766B0] text-white">진단정보 입력란</h2>
+                    <h2 class="text-xl font-bold py-3 bg-[#4766B0] text-white">임상정보 입력란</h2>
                 </div>
                 <!-- 진단 정보 입력란 -->
                 <div class="grid grid-rows-2 grid-cols-2 my-4 mx-4 flex items-center">
@@ -144,7 +143,7 @@
                 </div>
             </div>
             <!-- 세번째 container -->
-            <div class="container border-4 border-dashed border-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 w-1/3">
+            <div class="container border-4 border-dashed border-[#4766B0] bg-[#EFF4FF] shadow rounded-lg p-6 ml-6 w-1/3">
               <div id="upload-area" class="flex justify-center items-center w-full h-full">
                 <div id="drop-area" class=" rounded-lg w-full h-full p-12 flex flex-col justify-center items-center">
                   <img id="upload-icon" src="{% static 'css/src/source/add_photo.png' %}" alt="Upload Icon" class="mb-3">
@@ -170,10 +169,8 @@
             <button class="bg-[#4766B0] text-white text-3xl font-bold shadow rounded-2xl py-3 mb-4 w-52" onclick="saveData()">
                 확인 >>
             </button>
-
         </div>
     </div>
-</form>
 
     <script>
       // 데이터 저장을 위한 객체
@@ -188,6 +185,8 @@
 
       // 버튼 클릭 상태 토글 함수
       function toggleButton(element) {
+        const id = element.id;
+        patient_data[id] = !patient_data[id];
         element.classList.toggle('bg-gray-300', !patient_data[id]);
         element.classList.toggle('bg-[#4766B0]', patient_data[id]);
       }
@@ -213,29 +212,26 @@
 
       // input 페이지 전체 데이터 저장 함수
       function saveData() {
-        // 입력 필드에서 데이터 수집
-        const id = document.getElementById('id').value;
-        const name = document.getElementById('name').value;
-        const birth = document.getElementById('birth').value;
-        const gender = document.getElementById('gender').value;
-        const smoking = document.getElementById('smoking').classList.contains('bg-[#4766B0]') ? 'Yes' : 'No';
-        const drinking = document.getElementById('drinking').classList.contains('bg-[#4766B0]') ? 'Yes' : 'No';
-        const depression = document.getElementById('depression').classList.contains('bg-[#4766B0]') ? 'Yes' : 'No';
-        const mmseScore = document.getElementById('mmseScore').value;
-        const hippocampusVolume = document.getElementById('hippocampusVolume').value;
+        patient_data.smoking = document.getElementById('smoking').value;
+        patient_data.drinking = document.getElementById('drinking').value;
+        patient_data.depression = document.getElementById('depression').value;
 
-        // CSV 형식의 문자열로 변환
-        const csvContent = `ID,Name,Birth,Gender,Smoking,Drinking,Depression,MMSE Score,Hippocampus Volume\n${id},${name},${birth},${gender},${smoking},${drinking},${depression},${mmseScore},${hippocampusVolume}`;
+        patient_data.mmseScore = document.getElementById('mmseScore').value;
+        patient_data.hippocampusVolume = document.getElementById('hippocampusVolume').value;
 
-        // Blob 객체로 변환하여 다운로드 링크 생성
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'patient_data.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // 콘솔에 저장된 데이터를 표시 (실제 구현에서는 서버에 저장하거나 다른 처리를 할 수 있음)
+        console.log(data);
+
+        // 입력 필드 초기화
+        document.getElementById('smoking').value = '';
+        document.getElementById('drinking').value = '';
+        document.getElementById('depression').value = '';
+
+        document.getElementById('mmseScore').value = '';
+        document.getElementById('hippocampusVolume').value = '';
+
+        // 저장 완료 알림
+        alert('저장되었습니다.');
       }
       // 드롭 영역 요소
   const dropArea = document.getElementById('drop-area');
